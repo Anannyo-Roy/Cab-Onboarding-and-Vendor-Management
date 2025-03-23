@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- To check all the active assigned vehicles for the vendor -->
+
+<div class="container-fluid d-flex p-0">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.dashboard') }}" class="nav-link">Vendor Registration</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.vehicle_requests') }}" class="nav-link">Vehicle Requests</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.active_vehicles') }}" class="nav-link active">Active Vehicles</a></li>
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content p-4">
+        <h2 class="fw-bold text-center onboarding-title">
+            <i class="bi bi-truck-front-fill"></i> Active Vehicles
+        </h2>
+        <hr class="title-separator">
+
+        <!-- Check if there are active drivers -->
+        {% if active_drivers|length == 0 %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No active vehicles assigned.</p>
+            </div>
+        {% else %}
+            <div class="row d-flex flex-column">
+                {% for driver in active_drivers %}
+                <div class="col-12 mb-4">
+                    <div class="card shadow-lg p-4" style="background-color: #d7eec8;">
+                        <div class="d-flex align-items-center justify-content-between">
+
+                            <div class="image-container">
+                                <img src="{{ url_for('static', filename=driver[2]) }}" class="image rounded" alt="Driver Image">
+                            </div>
+                            <div class="image-container">
+                                <img src="{{ url_for('static', filename=driver[7]) }}" class="image rounded" alt="Vehicle Image">
+                            </div>
+                            <div class="image-container">
+                                <img src="{{ url_for('static', filename=driver[3]) }}" class="image rounded" alt="License Image">
+                            </div>
+
+                            <div class="details-container">
+                                <h5 class="text-primary fw-bold">{{ driver[0] }}</h5> 
+                                <p><i class="bi bi-envelope"></i> {{ driver[1] }}</p> 
+                                <p><strong>Vehicle:</strong> {{ driver[4] }} ({{ driver[6] }})</p> 
+                                <p><strong>Plate Number:</strong> {{ driver[5] }}</p>
+                            </div>
+
+                            <div class="button-container">
+                                <form action="{{ url_for('vendor_dashboard.remove_access') }}" method="POST">
+                                    <input type="hidden" name="driver_email" value="{{ driver[1] }}">
+                                    <button type="submit" class="btn btn-danger">Revoke Access</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Bootstrap Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .onboarding-title {
+        color: #27667B;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 3px;
+        background: #27667B;
+        width: 80%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: #d7eec8;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #27667B;
+    }
+
+    .image-container {
+        flex: 0 0 150px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .image {
+        width: 150px; 
+        height: 150px; 
+        object-fit: contain; 
+        border-radius: 10px;
+        border: 3px solid #27667B;
+        background: white;
+    }
+
+    .license-img {
+        border-color: #d9534f;
+    }
+
+    .details-container {
+        flex: 1;
+        min-width: 200px; 
+        margin-left: 20px; 
+    }
+
+    .button-container {
+        flex: 0 0 150px; 
+        display: flex;
+        justify-content: flex-end; 
+        align-items: center;
+    }
+
+    .btn-danger {
+        background-color: #D9534F;
+        border-color: #D9534F;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #C9302C;
+        border-color: #C9302C;
+    }
+
+    @media (max-width: 768px) {
+        .content {
+            margin-left: 0;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+            text-align: center;
+        }
+
+        .card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .image-container {
+            margin: 10px 0;
+        }
+
+        .image {
+            width: 100%;
+            height: 140px;
+        }
+
+        .btn-danger {
+            width: 100%;
+        }
+    }
+</style>
+
+{% endblock body %}

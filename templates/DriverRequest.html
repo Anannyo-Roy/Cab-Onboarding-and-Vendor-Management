@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- Page for the driver, to add cars for request -->
+
+<div class="container-fluid d-flex p-0">
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.dashboard') }}" class="nav-link">Driver Onboarding</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.DriverRequest') }}" class="nav-link">Request Vehicle</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.assigned_vehicle') }}" class="nav-link">Assigned Vehicle</a></li>
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="content p-4">
+        <div class="form-container">
+            <h2 class="fw-bold text-center onboarding-title">
+                Available Vehicles for {{ vehicle_type }}
+                <i class="bi bi-truck text-primary"></i>
+            </h2>
+            <hr class="title-separator">
+
+            {% if request_status == 'sent' or request_status == 'approved' %}
+            <div class="alert alert-info text-center">
+                Your vehicle request has already been sent or approved. You cannot modify your request at this time.
+            </div>
+            {% endif %}
+
+            <div class="vehicle-list">
+                {% for vehicle in vehicles %}
+                <div class="vehicle-card {% if request_status == 'sent' or request_status == 'approved' %}locked{% endif %}" id="vehicle{{ loop.index }}">
+                    <img src="{{ url_for('static', filename=vehicle[2]) }}" alt="Vehicle Image">
+                    <div class="vehicle-info">
+                        <h5>{{ vehicle[0] }}</h5>
+                        <p><strong>Brand:</strong> {{ vehicle[1] }}</p>
+                        <p><strong>Available Units:</strong> {{ vehicle[3] if vehicle[3] is not none else 'N/A' }}</p>
+                    </div>                    
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="toggleRequest('vehicle{{ loop.index }}', '{{ vehicle[0] }}')" {% if request_status == 'sent' or request_status == 'approved' %}disabled{% endif %}>Request+</button>
+                        <button class="btn btn-secondary" onclick="removeRequest('vehicle{{ loop.index }}', '{{ vehicle[0] }}')" {% if request_status == 'sent' or request_status == 'approved' %}disabled{% endif %}>Remove</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button class="btn send-request-btn" onclick="sendRequest()" {% if request_status == 'sent' or request_status == 'approved' %}disabled{% endif %}>Send Request</button>
+        </div>
+    </div>
+</div>
+
+<!-- The requests added being processed -->
+<script>
+    let selectedVehicles = [];
+
+    function toggleRequest(vehicleId, vehicleName) {
+        let vehicleCard = document.getElementById(vehicleId);
+        if (!selectedVehicles.includes(vehicleName)) {
+            selectedVehicles.push(vehicleName);
+            vehicleCard.classList.add("requested");
+        }
+    }
+
+    function removeRequest(vehicleId, vehicleName) {
+        let vehicleCard = document.getElementById(vehicleId);
+        selectedVehicles = selectedVehicles.filter(name => name !== vehicleName);
+        vehicleCard.classList.remove("requested");
+    }
+
+    function sendRequest() {
+        if (selectedVehicles.length === 0) {
+            alert("Please select at least one vehicle.");
+            return;
+        }
+
+        fetch("{{ url_for('driver_dashboard.submit_vehicle_request') }}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ vehicles: selectedVehicles })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Request submitted successfully!");
+                window.location.reload();
+            } else {
+                alert("Error submitting request.");
+            }
+        });
+    }
+</script>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .nav-link {
+        color: white !important;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .nav-link:hover {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .form-container {
+        background: #d7eec8;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        max-width: 1200px;
+        width: 90%;
+        margin: auto;
+    }
+
+    .onboarding-title {
+        color: #27667B;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 3px;
+        background: #27667B;
+        width: 80%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .vehicle-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .vehicle-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 280px;
+        transition: 0.3s;
+    }
+
+    .vehicle-card img {
+        width: 250px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .vehicle-card.requested {
+        border: 3px solid green;
+    }
+
+    .button-group {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .send-request-btn {
+        margin-top: 20px;
+        width: 100%;
+        background-color: #27667B;
+        border-color: #27667B;
+        color: white;
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: 0.3s;
+    }
+
+    .send-request-btn:hover {
+        background-color: #1f4f61;
+        border-color: #1f4f61;
+    }
+
+    @media (max-width: 768px) {
+        .content {
+            margin-left: 0;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+            text-align: center;
+        }
+
+        .vehicle-card {
+            width: 90%;
+        }
+    }
+
+    .vehicle-info p {
+        margin: 5px 0; 
+        font-size: 16px;
+        font-weight: normal;
+        color: #333; 
+    }
+
+    .vehicle-info p strong {
+        font-weight: bold;
+        color: #27667B; 
+    }
+
+    .vehicle-card.locked {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+{% endblock body %}

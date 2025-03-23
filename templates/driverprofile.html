@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container-fluid d-flex p-0">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.dashboard') }}" class="nav-link">Driver Onboarding</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.DriverRequest') }}" class="nav-link">Request Vehicle</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.assigned_vehicle') }}" class="nav-link">Assigned Vehicle</a></li> 
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+    
+
+    <div class="content p-4">
+        <div class="profile-container">
+            <div class="card shadow-lg p-4">
+
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        {% if driver_image %}
+                            <img src="{{ url_for('static', filename=driver_image) }}" alt="Driver Image" class="img-fluid rounded">
+                        {% else %}
+                            <form method="POST" action="{{ url_for('driver_dashboard.upload_image') }}" enctype="multipart/form-data">
+                                <label for="driverImageUpload" class="btn btn-outline-secondary">Upload Driver Image</label>
+                                <input type="file" name="image" id="driverImageUpload" class="d-none" onchange="this.form.submit()">
+                                <input type="hidden" name="image_type" value="driver">
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h2 class="fw-bold text-primary custom-heading">{{ full_name }}</h2>
+                        <p><i class="bi bi-telephone"></i> {{ phone }}</p>
+                        <p><i class="bi bi-envelope"></i> {{ email }}</p>
+                    </div>
+                </div>
+
+                <hr class="title-separator">
+
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        {% if license_image %}
+                            <img src="{{ url_for('static', filename=license_image) }}" alt="License Image" class="img-fluid rounded">
+                        {% else %}
+                            <form method="POST" action="{{ url_for('driver_dashboard.upload_image') }}" enctype="multipart/form-data">
+                                <label for="licenseImageUpload" class="btn btn-outline-secondary">Upload License Image</label>
+                                <input type="file" name="image" id="licenseImageUpload" class="d-none" onchange="this.form.submit()">
+                                <input type="hidden" name="image_type" value="license">
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <p><strong>License Number:</strong> {{ license_number }}</p>
+                        <p><strong>Vehicle Type:</strong> {{ vehicle_type }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover; 
+        background-attachment: fixed;
+        height: 100vh; 
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .custom-heading{
+        margin-bottom: 20px;
+    }
+
+    .row {
+        margin-bottom: 20px;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .nav-link:hover {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px; 
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .profile-container {
+        max-width: 1000px; 
+        margin: auto;
+    }
+
+    .card {
+        background: rgba(215, 238, 200, 0.95); 
+        border-radius: 15px; 
+        box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2); 
+        padding: 50px; 
+    }
+
+    img {
+        max-width: 120%; 
+        height: auto;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 4px; 
+        background: #27667B; 
+        width: 100%; 
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .profile-container img {
+        border: 3px solid #27667B; 
+        border-radius: 10px; 
+        padding: 3px; 
+        background: white; 
+    }
+
+
+    .small-btn {
+        width: 22px;  
+        height: 22px;  
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 12px;
+        line-height: 1;
+        border-width: 1px;
+    }
+</style>
+
+{% endblock body %}

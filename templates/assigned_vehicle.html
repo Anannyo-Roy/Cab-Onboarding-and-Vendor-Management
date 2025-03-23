@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- The assigned vehicle to the driver, for the driver to see and revoke-->
+
+<div class="container-fluid d-flex p-0">
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.dashboard') }}" class="nav-link">Driver Onboarding</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.DriverRequest') }}" class="nav-link">Request Vehicle</a></li>
+            <li class="nav-item"><a href="{{ url_for('driver_dashboard.assigned_vehicle') }}" class="nav-link active">Assigned Vehicle</a></li> 
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="content p-4">
+        <h2 class="fw-bold text-center onboarding-title">
+            Assigned Vehicle <i class="bi bi-truck-front-fill"></i>
+        </h2>
+        <hr class="title-separator">
+
+        <!-- Assigned Vehicle Card -->
+        <div class="card shadow-lg p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename=assigned_vehicle.image_link) }}" class="image rounded" alt="Vehicle Image">
+                </div>
+
+                <div class="details-container">
+                    <h5 class="text-primary fw-bold">{{ assigned_vehicle.name }}</h5> 
+                    <p><strong>Brand:</strong> {{ assigned_vehicle.brand }}</p> 
+                    <p><strong>Plate Number:</strong> {{ assigned_vehicle.plate_number }}</p> 
+                </div>
+
+                <!-- Release -->
+                <div class="button-container">
+                    <form action="{{ url_for('driver_dashboard.release_vehicle') }}" method="POST">
+                        <input type="hidden" name="vehicle_id" value="{{ assigned_vehicle.id }}">
+                        <button type="submit" class="btn btn-danger">Release Vehicle</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    .text-primary{
+        font-size: 25px;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .card {
+        background: #d7eec8;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #27667B;
+    }
+
+    .image-container {
+        flex: 0 0 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .image {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 3px solid #27667B;
+        background: white;
+    }
+
+    .details-container {
+        flex: 1;
+        min-width: 200px;
+        margin-left: 20px;
+    }
+
+    .btn-danger {
+        background-color: #D9534F;
+        border-color: #D9534F;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #C9302C;
+        border-color: #C9302C;
+    }
+
+    .onboarding-title {
+        color: #27667B;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 3px;
+        background: #27667B;
+        width: 80%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+</style>
+
+{% endblock body %}

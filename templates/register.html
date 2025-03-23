@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container-fluid hero d-flex flex-column align-items-center justify-content-center">
+    <div class="content-box p-5">
+        <div class="text-center">
+            <h2 class="fw-bold text-uppercase custom-heading">Register</h2>
+        </div>
+
+        <form method="POST" class="d-flex flex-column gap-3">
+            <div class="form-group">
+                <label class="fw-bold">Email:</label>
+                <input type="email" name="email" class="form-control" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label class="fw-bold">Password:</label>
+                <input type="password" name="password" class="form-control" required placeholder="Enter your password">
+            </div>
+
+            <div class="form-group">
+                <label class="fw-bold">Phone Number:</label>
+                <input type="tel" name="phone" class="form-control" pattern="[0-9]{10}" required placeholder="Enter 10-digit phone number">
+            </div>
+
+            <div class="form-group">
+                <label class="fw-bold">Role:</label>
+                <select name="role" class="form-select" required>
+                    <option value="" disabled selected>Select Role</option>
+                    <option value="driver">Driver</option>
+                    <option value="vendor">Vendor</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg w-100">Register</button>
+        </form>
+
+        <br>
+
+        <!-- Login Link -->
+        <a href="{{ url_for('blueprints.home') }}" class="btn btn-outline-dark btn-lg w-100">Already have an account? Login</a>
+    </div>
+</div>
+
+<style>
+    .hero {
+        height: 100vh;
+        background: url("{{ url_for('static', filename='images/backhome.jpg') }}") no-repeat center center;
+        background-size: cover;
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+    }
+
+    .content-box {
+        background: #d7eec8;
+        border: 3px solid #27667B;
+        border-radius: 15px;
+        padding: 40px;
+        width: 50%;
+        max-width: 600px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        margin: auto;
+    }
+
+    .form-group label {
+        display: block;
+        text-align: left;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #27667B;
+        border-radius: 5px;
+    }
+
+    .btn-success {
+        background-color: #A0C878;
+        border-color: #A0C878;
+        color: #143D60;
+    }
+
+    .btn-success:hover {
+        background-color: #8DBA6E;
+        border-color: #8DBA6E;
+    }
+</style>
+
+{% endblock body %}

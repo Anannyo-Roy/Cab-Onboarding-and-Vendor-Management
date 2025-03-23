@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- Page after clicking review request via vendor -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<div class="container-fluid d-flex p-0">
+
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.dashboard') }}" class="nav-link">Vendor Registration</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.vehicle_requests') }}" class="nav-link active">Vehicle Requests</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.active_vehicles') }}" class="nav-link">Active Vehicles</a></li>
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="content p-4">
+        <h2 class="fw-bold text-center title-heading">
+            <i class="bi bi-person-check"></i> Review Driver Request
+        </h2>
+        <hr class="title-separator">
+
+        <div class="profile-container card shadow-lg p-4">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    {% if driver[5] %}
+                        <img src="{{ url_for('static', filename=driver[5]) }}" alt="Driver Image" class="profile-img rounded">
+                    {% else %}
+                        <p class="text-muted">No Image Available</p>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-3 text-center">
+                    {% if driver[6] %}
+                        <img src="{{ url_for('static', filename=driver[6]) }}" alt="License Image" class="profile-img rounded">
+                    {% else %}
+                        <p class="text-muted">No License Image Available</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-3">
+                    <h2 class="fw-bold text-primary">{{ driver[0] }}</h2> 
+                    <p><i class="bi bi-telephone"></i> {{ driver[2] }}</p> 
+                    <p><i class="bi bi-envelope"></i> {{ driver[1] }}</p> 
+                    <p><strong>License Number:</strong> {{ driver[3] }}</p> 
+                    <p><strong>Preferred Vehicle Type:</strong> {{ driver[4] }}</p> 
+                </div>
+            </div>
+
+            <hr class="title-separator">
+
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="fw-bold">Requested Vehicles</h4>
+                    <div class="row">
+                        {% for vehicle_name, plate_numbers, image_link, vehicle_brand in available_vehicles %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card vehicle-card p-3">
+                                <div class="text-center">
+                                    <img src="{{ url_for('static', filename=image_link) }}" alt="{{ vehicle_name }}" class="vehicle-img">
+                                </div>
+                                <h5 class="card-title mt-2">{{ vehicle_name }}</h5>
+
+                                <form action="{{ url_for('vendor_dashboard.assign_vehicle') }}" method="POST">
+                                    <input type="hidden" name="driver_email" value="{{ driver[1] }}">
+                                    <input type="hidden" name="vehicle_name" value="{{ vehicle_name }}">
+                                    <input type="hidden" name="vehicle_brand" value="{{ vehicle_brand }}">
+
+                                    <label><strong>Select Plate Number:</strong></label>
+                                    <select class="form-select" name="plate_number" required>
+                                        <option selected disabled>Select Plate Number</option>
+                                        {% for plate in plate_numbers %}
+                                        <option value="{{ plate }}">{{ plate }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <button type="submit" name="action" value="approve" class="btn btn-success w-45">Assign Vehicle</button>
+                                        <button type="submit" name="action" value="reject" class="btn btn-danger w-45">Reject Request</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .title-heading {
+        color: #27667B;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 3px;
+        background: #27667B;
+        width: 100%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .profile-container {
+        background: #d7eec8 !important;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .profile-img {
+        max-width: 80%; 
+        height: auto;
+        border: 3px solid #27667B;
+        border-radius: 10px;
+        padding: 5px;
+        background: white;
+    }
+
+    .vehicle-card {
+        background: #e3f4c8;
+        border: 3px solid #1f4f61;
+        border-radius: 12px;
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+        padding: 15px;
+    }
+
+    .vehicle-img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        border-radius: 8px;
+        background-color: white;
+        padding: 5px;
+        border: 3px solid #1f4f61;
+    }
+
+    .btn-success {
+        background-color: #A0C878;
+        border-color: #A0C878;
+        color: #143D60;
+    }
+
+    .btn-danger {
+        background-color: #D9534F;
+        border-color: #D9534F;
+        color: white;
+    }
+</style>
+
+{% endblock body %}

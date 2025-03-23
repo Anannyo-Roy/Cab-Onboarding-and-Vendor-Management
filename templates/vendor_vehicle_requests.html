@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container-fluid d-flex p-0">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.dashboard') }}" class="nav-link">Vendor Registration</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.vehicle_requests') }}" class="nav-link active">Vehicle Requests</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.active_vehicles') }}" class="nav-link">Active Vehicles</a></li>
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content p-4">
+        <h2 class="fw-bold text-center title-heading">
+            <i class="bi bi-truck-front-fill"></i> Vehicle Requests
+        </h2>
+        <hr class="title-separator">
+
+        <div class="row d-flex flex-column">
+            {% for request in requests %}
+            <div class="col-12 mb-4">
+                <div class="card request-card shadow-sm p-3 w-100">
+                    <div class="d-flex align-items-center">
+  
+                        <div class="text-center me-3">
+                            {% if request[5] %}
+                                <img src="{{ url_for('static', filename=request[5]) }}" alt="Driver Image" class="driver-img rounded-circle">
+                            {% else %}
+                                <p class="text-muted">No Image Available</p>
+                            {% endif %}
+                        </div>
+ 
+                        <div class="flex-grow-1">
+                            <h5 class="fw-bold">{{ request[3] }}</h5> 
+                            <p class="mb-1"><strong>Vehicle Type:</strong> {{ request[4] }}</p> 
+                        </div>
+
+                        <!-- Review Request Button -->
+                        <div>
+                            <a href="{{ url_for('vendor_dashboard.review_request', driver_email=request[0]) }}" class="btn btn-success">Review Request</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No pending vehicle requests.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .title-heading {
+        color: #27667B;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 3px;
+        background: #27667B;
+        width: 80%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .request-card {
+        background: #d7eec8; 
+        border-radius: 10px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .driver-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border: 3px solid #27667B;
+        padding: 3px;
+        background: white;
+    }
+
+    .btn-success {
+        background-color: #A0C878;
+        border-color: #A0C878;
+        color: #143D60;
+    }
+
+    .btn-success:hover {
+        background-color: #8DBA6E;
+        border-color: #8DBA6E;
+    }
+</style>
+
+{% endblock body %}

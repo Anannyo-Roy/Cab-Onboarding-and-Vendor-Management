@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<div class="container-fluid d-flex p-0">
+    <nav class="sidebar">
+        <h3 class="sidebar-title">MoveInSync</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.profile') }}" class="nav-link">Profile</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.dashboard') }}" class="nav-link">Vendor Registration</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.vehicle_requests') }}" class="nav-link active">Vehicle Requests</a></li>
+            <li class="nav-item"><a href="{{ url_for('vendor_dashboard.active_vehicles') }}" class="nav-link">Active Vehicles</a></li>
+            <li class="nav-item"><a href="{{ url_for('blueprints.logout') }}" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="content p-4">
+        <div class="form-container">
+            <h2 class="fw-bold text-center onboarding-title">
+                Vendor Registration
+                {% if registration_complete %}
+                <i class="bi bi-file-lock2-fill text-primary"></i>
+                {% endif %}
+            </h2>
+            <hr class="title-separator">
+            
+            {% if registration_complete %}
+                <p class="text-center text-success">Registration form filled!</p>
+            {% endif %}
+    
+            <form method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+                <div class="form-group">
+                    <label class="fw-bold">Full Name:</label>
+                    <input type="text" name="full_name" class="form-control" 
+                           placeholder="Enter your full name" 
+                           value="{{ full_name if full_name else '' }}" 
+                           {% if registration_complete %}readonly{% endif %} 
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="fw-bold">Email:</label>
+                    <input type="email" class="form-control" value="{{ email }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="fw-bold">Phone Number:</label>
+                    <input type="tel" name="phone" class="form-control" 
+                           placeholder="Enter phone number" 
+                           value="{{ phone if phone else '' }}" 
+                           readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="fw-bold">Business License:</label>
+                    <input type="text" name="business_license" class="form-control" 
+                           placeholder="Enter business license number" 
+                           value="{{ business_license if business_license else '' }}" 
+                           {% if registration_complete %}readonly{% endif %} 
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="fw-bold">Vendor Level:</label>
+                    <select name="vendor_level" class="form-select" {% if registration_complete %}disabled{% endif %} required>
+                        <option value="" disabled>Select Vendor Type</option>
+                        <option value="super" {% if vendor_level=='super' %}selected{% endif %}>Super Vendor</option>
+                        <option value="sub" {% if vendor_level=='sub' %}selected{% endif %}>Sub-Vendor</option>
+                    </select>
+                    {% if registration_complete %}
+                    <i class="bi bi-lock-fill text-muted"></i> 
+                    {% endif %}
+                </div>                 
+
+                <div class="form-group">
+                    <label class="fw-bold">Business License Image:</label>
+                    <div class="text-center">
+                        {% if vendor_image %}
+                            <p class="text-success fw-bold">Image uploaded ✅</p>
+                        {% else %}
+                            <p class="text-danger">No image uploaded</p>
+                        {% endif %}
+                    </div>
+            
+                    <input type="file" name="business_license_image" class="form-control" accept=".png, .jpg, .jpeg, .gif" {% if registration_complete %}readonly{% endif %}>
+                </div>
+                
+                {% if not registration_complete %}
+                    <button type="submit" class="btn btn-success btn-lg w-100">Submit</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/dashback.jpg') }}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #27667B;
+        color: white;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        opacity: 95%;
+    }
+
+    .sidebar-title {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background: #1f4f61;
+    }
+
+    .content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 20px;
+    }
+
+    .form-container {
+        background: #d7eec8;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .onboarding-title {
+        color: #27667B;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .title-separator {
+        border: 0;
+        height: 3px;
+        background: #27667B;
+        width: 80%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        text-align: left;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #27667B;
+        border-radius: 5px;
+    }
+
+    .form-control[type="file"] {
+        height: 60px;
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .btn-success {
+        background-color: #A0C878;
+        border-color: #A0C878;
+        color: #143D60;
+    }
+
+    .btn-success:hover {
+        background-color: #8DBA6E;
+        border-color: #8DBA6E;
+    }
+
+    .bi-lock-fill {
+        margin-left: 10px;
+        font-size: 1.2rem;
+    }
+</style>
+
+{% endblock body %}

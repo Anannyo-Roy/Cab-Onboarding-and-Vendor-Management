@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block body %}
+<!-- Landing Page -->
+
+<!-- Hero Section -->
+<div class="container-fluid hero d-flex flex-column align-items-center justify-content-center">
+    <div class="content-box p-5">
+        <div class="text-center">
+            <h1 class="display-1 fw-bold text-uppercase custom-heading">MoveInSync</h1>
+            <p class="lead">Think Office Commute. Think of Us.</p>
+        </div>
+
+        <div class="mt-4 d-flex flex-column gap-3">
+            <div class="d-flex justify-content-between gap-4"> 
+                <a href="{{ url_for('blueprints.login', role='vendor') }}"
+                    class="btn btn-primary btn-lg px-5 flex-grow-1 btn-spacing">
+                    Login as Vendor
+                </a>
+                <a href="{{ url_for('blueprints.login', role='driver') }}"
+                    class="btn btn-info btn-lg px-5 flex-grow-1 btn-spacing">
+                    Login as Driver
+                </a>
+            </div>
+            <a href="{{ url_for('blueprints.register') }}"
+                class="btn btn-outline-dark btn-lg px-5 flex-grow-1 btn-spacing">
+                Register
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/backhome.jpg') }}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+    }
+
+    .lead {
+        color: black;
+    }
+
+    .navbar {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 15px;
+    }
+
+    .btn-spacing {
+        margin-bottom: 15px;
+    }
+
+    .hero {
+        height: 100vh;
+        background: transparent;
+        color: white;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        text-transform: uppercase;
+        text-align: center;
+        width: 80%;
+        max-width: 900px;
+    }
+
+    .btn-primary {
+        background-color: #a0c878;
+        border-color: #A0C878;
+        color: #143D60;
+    }
+
+    .btn-info {
+        background-color: #a0c878;
+        border-color: #A0C878;
+        color: #143D60;
+    }
+
+    .btn-outline-dark {
+        background-color: #449ebd;
+        color: #143D60;
+    }
+
+    .custom-heading {
+        font-size: 6rem;
+        color: #27667B;
+        text-align: center;
+        display: block;
+        margin: auto;
+    }
+
+    .btn-primary:hover {
+        background-color: rgb(71, 68, 68);
+        border-color: rgb(71, 68, 68);
+    }
+
+    .btn-info:hover {
+        background-color: rgb(71, 68, 68);
+        border-color: rgb(71, 68, 68);
+    }
+
+    .content-box {
+        background: #d7eec8;
+        border: 3px solid #27667B;
+        border-radius: 15px;
+        padding: 40px;
+        width: 50%;
+        max-width: 600px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        align-items: center;
+    }
+
+    .d-flex.justify-content-between.gap-4 {
+        gap: 10px; 
+    }
+</style>
+
+{% endblock body %}
