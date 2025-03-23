@@ -1,0 +1,116 @@
+Introduction
+This Flask-based web application allows drivers and vendors to manage cab onboarding and vehicle assignments efficiently. 
+
+- Drivers register, provide license details, and request vehicles.  
+- Vendors approve or reject vehicle requests and manage assigned vehicles.  
+
+2. System Architecture
+Backend (Flask)
+- Uses Blueprints for modularity:  
+  - `blueprints/routes.py` → Handles authentication  
+  - `blueprints/driver_dashboard.py` → Handles driver-related operations  
+  - `blueprints/vendor_dashboard.py` → Handles vendor-related operations  
+
+Database (PostgreSQL)
+- drivers: Stores driver details  
+- vendors: Stores vendor details  
+- vehicles: Stores vehicle inventory  
+- vehicle_requests: Tracks vehicle requests  
+- assigned_vehicles: Tracks assigned vehicles  
+
+Frontend
+- Bootstrap-powered HTML templates 
+- Flask Jinja templating for dynamic content  
+- Custom CSS for styling  
+
+---
+
+3. User Roles
+Driver
+- Register and complete onboarding  
+- Upload license details and request a vehicle  
+- View and release assigned vehicles  
+
+Vendor
+- Register and complete verification  
+- Approve or reject driver vehicle requests  
+- Assign available vehicles to drivers  
+- Remove assigned vehicles  
+
+---
+
+4. API Endpoints
+
+Authentication Routes :
+  The login route **(/auth/login)** is where both drivers and vendors can log in. It supports both GET and POST methods.
+  The register route (/auth/register) allows users to sign up as either a driver or a vendor, using GET or POST.
+  The logout route (/auth/logout) logs the user out and clears the session. This is a GET request.
+
+Driver Operations
+  The profile route (/driver/profile) allows drivers to view their profile. This is a GET request that fetches the driver's details, including their license number and profile image.
+  The onboarding form (/driver/dashboard) is where drivers fill out their profile information during the onboarding process. It's a GET and POST request.
+  The request vehicle route (/driver/DriverRequest) lets drivers view available vehicles and request one. This is a GET request.
+  The assigned vehicle route (/driver/assigned_vehicle) shows the vehicle that has been assigned to the driver. This is a GET request.
+  The release vehicle route (/driver/release_vehicle) allows the driver to release the vehicle they were assigned. This is a POST request.
+
+Vendor Operations
+  The vendor registration route (/vendor/dashboard) is where vendors can either register or update their details during the onboarding process. It supports both GET and POST requests.
+  The profile route (/vendor/profile) lets vendors view and edit their profile information. This is a GET request.
+  The vehicle requests route (/vendor/vehicle_requests) displays pending vehicle requests from drivers. This is a GET request.
+  The review request route (/vendor/review_request/<driver_email>) allows vendors to review a driver’s vehicle request and approve or reject it. This is a GET request.
+  The active vehicles route (/vendor/active_vehicles) shows all vehicles that have been assigned to drivers. This is a GET request.
+  The remove vehicle access route (/vendor/remove_access) allows vendors to revoke access to a vehicle from a driver. This is a POST request.
+
+---
+
+5. Database Schema
+
+Drivers :
+CREATE TABLE drivers (
+    email VARCHAR(100) PRIMARY KEY,
+    full_name VARCHAR(100),
+    hashed_password TEXT NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    license_number VARCHAR(50) UNIQUE,
+    vehicle_type VARCHAR(50),
+    driver_image TEXT,
+    license_image TEXT,
+    vehicle_assigned BOOLEAN DEFAULT FALSE,  -- Indicates if a vehicle is assigned
+    vehicle_name TEXT,  -- Assigned vehicle name
+    vehicle_plate_number VARCHAR(50) UNIQUE,  -- Assigned vehicle plate number
+    vehicle_brand TEXT,  -- Assigned vehicle brand
+    request_status VARCHAR(10) CHECK (request_status IN ('none', 'sent', 'approved')) DEFAULT 'none'
+);
+
+Vendors : 
+CREATE TABLE vendors (
+    email VARCHAR(100) PRIMARY KEY,
+    full_name VARCHAR(100),
+    hashed_password TEXT NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    business_license VARCHAR(50) UNIQUE,
+    vendor_image TEXT,  -- Path for vendor profile image
+    business_license_image TEXT,  -- Path for business license image
+    vendor_level VARCHAR(10) CHECK (vendor_level IN ('super', 'sub')) NOT NULL,  -- Vendor type
+    registration_complete BOOLEAN DEFAULT FALSE  -- Indicates if vendor registration is complete
+);
+
+Vehicles :
+CREATE TABLE vehicle_requests (
+    id SERIAL PRIMARY KEY,
+    driver_email VARCHAR(100) NOT NULL,
+    requested_vehicles TEXT NOT NULL,  -- Comma-separated vehicle names
+    status VARCHAR(10) CHECK (status IN ('pending', 'done')) DEFAULT 'pending',
+    FOREIGN KEY (driver_email) REFERENCES drivers(email) ON DELETE CASCADE
+);
+
+Assigned Vehicles : 
+CREATE TABLE assigned_vehicles (
+    id SERIAL PRIMARY KEY,
+    vehicle_name TEXT NOT NULL,
+    vehicle_plate VARCHAR(50) UNIQUE NOT NULL,  -- Unique vehicle plate number
+    assigned_status BOOLEAN DEFAULT FALSE  -- Tracks if the vehicle is currently assigned
+);
+
+6. Future Work : 
+  Planned to implement vendor hierarchy mechanism and fleet operations for vendors 
