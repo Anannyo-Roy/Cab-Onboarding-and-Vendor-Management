@@ -112,5 +112,169 @@ CREATE TABLE assigned_vehicles (
     assigned_status BOOLEAN DEFAULT FALSE  -- Tracks if the vehicle is currently assigned
 );
 
-6. Future Work : 
+6. Dummy Database entries for Vehicles table and Vehicles Assigned Table (images for these are provided in the project):
+
+Vehicles Entries : 
+
+INSERT INTO vehicles (vehiclename, brand, type, image_link) VALUES
+('Amaze', 'Honda', 'Sedan', 'static/uploads/hondamaze.jpeg'),
+('Aura', 'Hyundai', 'Sedan', 'static/uploads/hyundaiaura.jpg'),
+('Ciaz', 'Maruti', 'Sedan', 'static/uploads/maruticiaz.jpg'),
+('Suzuki', 'Maruti', 'Sedan', 'static/uploads/marutisuzuki.jpeg'),
+('Tigor', 'Tata', 'Sedan', 'static/uploads/tatatigor.avif');
+
+
+
+INSERT INTO vehicles (vehiclename, brand, type, image_link) VALUES
+('Creta', 'Hyundai', 'SUV', 'images/hyundaicreta.avif'),
+('Seltos', 'Kia', 'SUV', 'images/kiaseltos.avif'),
+('Sonet', 'Kia', 'SUV', 'images/kiasonet.avif'),
+('XUV700', 'Mahindra', 'SUV', 'images/mahindra700.avif'),
+('Nexon', 'Tata', 'SUV', 'images/tatanexon.avif');
+
+INSERT INTO vehicles (vehiclename, brand, type, image_link) VALUES
+('RTR 160', 'Apache', 'Bike', 'images/apachert160.webp'),
+('Shine', 'Honda', 'Bike', 'images/hondashine.jpg'),
+('SP 160', 'Honda', 'Bike', 'images/Honda-SP-160.webp');
+
+INSERT INTO vehicles (vehiclename, brand, type, image_link) VALUES
+('Baleno', 'Maruti', 'Hatchback', 'images/marutibaleno.webp'),
+('Swift', 'Maruti', 'Hatchback', 'images/marutiswift.webp'),
+('Glanza', 'Toyota', 'Hatchback', 'images/toyotaglanza.webp');
+
+-- 1. Drop the check constraint
+ALTER TABLE vehicles DROP CONSTRAINT vehicles_type_check;
+
+-- 2. Convert all values in the "type" column to lowercase
+UPDATE vehicles SET type = LOWER(type);
+
+-- 3. Re-add the check constraint with lowercase values
+ALTER TABLE vehicles ADD CONSTRAINT vehicles_type_check 
+CHECK (type IN ('sedan', 'suv', 'hatchback', 'bike'));
+
+-- 1. Add the new column with a default value of 5
+ALTER TABLE vehicles ADD COLUMN availability INT DEFAULT 5;
+
+-- 2. Ensure all existing rows have availability set to 5
+UPDATE vehicles SET availability = 5;
+
+Assigned vehicles table : 
+
+
+INSERT INTO assigned_vehicles (vehicle_name, vehicle_plate, assigned_status) VALUES
+-- Honda Amaze (5 entries)
+('Amaze', 'MH01AB1234', FALSE),
+('Amaze', 'MH02CD5678', FALSE),
+('Amaze', 'MH03EF9012', FALSE),
+('Amaze', 'MH04GH3456', FALSE),
+('Amaze', 'MH05IJ7890', FALSE),
+
+-- Hyundai Aura (5 entries)
+('Aura', 'MH06KL2345', FALSE),
+('Aura', 'MH07MN6789', FALSE),
+('Aura', 'MH08OP1234', FALSE),
+('Aura', 'MH09QR5678', FALSE),
+('Aura', 'MH10ST9012', FALSE),
+
+-- Maruti Ciaz (5 entries)
+('Ciaz', 'MH11UV3456', FALSE),
+('Ciaz', 'MH12WX7890', FALSE),
+('Ciaz', 'MH13YZ2345', FALSE),
+('Ciaz', 'MH14AA6789', FALSE),
+('Ciaz', 'MH15BB1234', FALSE),
+
+-- Maruti Suzuki (5 entries)
+('Suzuki', 'MH16CC5678', FALSE),
+('Suzuki', 'MH17DD9012', FALSE),
+('Suzuki', 'MH18EE3456', FALSE),
+('Suzuki', 'MH19FF7890', FALSE),
+('Suzuki', 'MH20GG2345', FALSE),
+
+-- Tata Tigor (5 entries)
+('Tigor', 'MH21HH6789', FALSE),
+('Tigor', 'MH22II1234', FALSE),
+('Tigor', 'MH23JJ5678', FALSE),
+('Tigor', 'MH24KK9012', FALSE),
+('Tigor', 'MH25LL3456', FALSE),
+
+-- Hyundai Creta (5 entries)
+('Creta', 'MH26MM7890', FALSE),
+('Creta', 'MH27NN2345', FALSE),
+('Creta', 'MH28OO6789', FALSE),
+('Creta', 'MH29PP1234', FALSE),
+('Creta', 'MH30QQ5678', FALSE),
+
+-- Kia Seltos (5 entries)
+('Seltos', 'MH31RR9012', FALSE),
+('Seltos', 'MH32SS3456', FALSE),
+('Seltos', 'MH33TT7890', FALSE),
+('Seltos', 'MH34UU2345', FALSE),
+('Seltos', 'MH35VV6789', FALSE),
+
+-- Kia Sonet (5 entries)
+('Sonet', 'MH36WW1234', FALSE),
+('Sonet', 'MH37XX5678', FALSE),
+('Sonet', 'MH38YY9012', FALSE),
+('Sonet', 'MH39ZZ3456', FALSE),
+('Sonet', 'MH40AA7890', FALSE),
+
+-- Mahindra XUV700 (5 entries)
+('XUV700', 'MH41BB2345', FALSE),
+('XUV700', 'MH42CC6789', FALSE),
+('XUV700', 'MH43DD1234', FALSE),
+('XUV700', 'MH44EE5678', FALSE),
+('XUV700', 'MH45FF9012', FALSE),
+
+-- Tata Nexon (5 entries)
+('Nexon', 'MH46GG3456', FALSE),
+('Nexon', 'MH47HH7890', FALSE),
+('Nexon', 'MH48II2345', FALSE),
+('Nexon', 'MH49JJ6789', FALSE),
+('Nexon', 'MH50KK1234', FALSE),
+
+-- Apache RTR 160 (5 entries)
+('RTR 160', 'MH51LL5678', FALSE),
+('RTR 160', 'MH52MM9012', FALSE),
+('RTR 160', 'MH53NN3456', FALSE),
+('RTR 160', 'MH54OO7890', FALSE),
+('RTR 160', 'MH55PP2345', FALSE),
+
+-- Honda Shine (5 entries)
+('Shine', 'MH56QQ6789', FALSE),
+('Shine', 'MH57RR1234', FALSE),
+('Shine', 'MH58SS5678', FALSE),
+('Shine', 'MH59TT9012', FALSE),
+('Shine', 'MH60UU3456', FALSE),
+
+-- Honda SP 160 (5 entries)
+('SP 160', 'MH61VV7890', FALSE),
+('SP 160', 'MH62WW2345', FALSE),
+('SP 160', 'MH63XX6789', FALSE),
+('SP 160', 'MH64YY1234', FALSE),
+('SP 160', 'MH65ZZ5678', FALSE),
+
+-- Maruti Baleno (5 entries)
+('Baleno', 'MH66AA9012', FALSE),
+('Baleno', 'MH67BB3456', FALSE),
+('Baleno', 'MH68CC7890', FALSE),
+('Baleno', 'MH69DD2345', FALSE),
+('Baleno', 'MH70EE6789', FALSE),
+
+-- Maruti Swift (5 entries)
+('Swift', 'MH71FF1234', FALSE),
+('Swift', 'MH72GG5678', FALSE),
+('Swift', 'MH73HH9012', FALSE),
+('Swift', 'MH74II3456', FALSE),
+('Swift', 'MH75JJ7890', FALSE),
+
+-- Toyota Glanza (5 entries)
+('Glanza', 'MH76KK2345', FALSE),
+('Glanza', 'MH77LL6789', FALSE),
+('Glanza', 'MH78MM1234', FALSE),
+('Glanza', 'MH79NN5678', FALSE),
+('Glanza', 'MH80OO9012', FALSE);
+
+
+
+7. Future Work : 
   Planned to implement vendor hierarchy mechanism and fleet operations for vendors 
